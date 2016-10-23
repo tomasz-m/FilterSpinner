@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 
@@ -22,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SuperSpinner superSpinner = (SuperSpinner) findViewById(R.id.superSpinner);
+        final SuperSpinner superSpinner = (SuperSpinner) findViewById(R.id.superSpinner);
 
         dataProvider = MockDataProvider.getInstance(getApplicationContext());
 
@@ -30,6 +32,18 @@ public class MainActivity extends AppCompatActivity {
 
         superSpinner.setAdapter(simpleAdapter);
         superSpinner.setFilterable(true);
+
+        superSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("On Item Selected",superSpinner.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
 
         if(isBlocking)
@@ -75,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             if (callback != null)
                 callback.provideAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.test_list_item, dataProvider.getItems(text)));
-            Log.d("onFilter","run");
+
         }
     }
 
