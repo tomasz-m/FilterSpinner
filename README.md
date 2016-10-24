@@ -25,7 +25,7 @@ android {
     ....
 }
 dependencies {
-    compile 'com.github.tomasz-m:filterspinner:1.3' //<==line to add
+    compile 'com.github.tomasz-m:filterspinner:1.3.1' //<==line to add
 }
 ```
 
