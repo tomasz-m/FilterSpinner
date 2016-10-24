@@ -9,15 +9,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 
-import info.tomaszminiach.superspinner.DataProvider;
-import info.tomaszminiach.superspinner.MockDataProvider;
 import info.tomaszminiach.superspinner.SuperSpinner;
 
 public class MainActivity extends AppCompatActivity {
     DataProvider dataProvider;
     Handler handler = new Handler();
     MyRunnable runnable;
-    boolean isBlocking=false;
+    boolean isBlocking=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +26,10 @@ public class MainActivity extends AppCompatActivity {
 
         dataProvider = MockDataProvider.getInstance(getApplicationContext());
 
-        ArrayAdapter<String> simpleAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dataProvider.getItems(null));
+        //setting adapter is not needed when you use filtering
+//        ArrayAdapter<String> simpleAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dataProvider.getItems(null));
+//        superSpinner.setAdapter(simpleAdapter);
 
-        superSpinner.setAdapter(simpleAdapter);
         superSpinner.setFilterable(true);
 
         superSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

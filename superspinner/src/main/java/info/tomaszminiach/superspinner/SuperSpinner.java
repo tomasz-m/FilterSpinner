@@ -20,19 +20,19 @@ import android.widget.TextView;
 public class SuperSpinner extends FrameLayout {
 
     //private int maxCount;
-    private Context mContext;
-    private boolean IS_FILTERABLE = false;
-    private ListAdapter mAdapter;
-    private String emptyText = "no data";
-    private FilterListener filterListener;
-    private CallbackFilterListener callbackFilterListener;
-    private ListView list;
-    private View hintView;
-    private AdapterView.OnItemSelectedListener onItemSelectedListener;
-    private Object selectedItem;
-    private int selectedItemPosition;
+    Context mContext;
+    boolean IS_FILTERABLE = false;
+    ListAdapter mAdapter;
+    String emptyText = "no data";
+    FilterListener filterListener;
+    CallbackFilterListener callbackFilterListener;
+    ListView list;
+    View hintView;
+    AdapterView.OnItemSelectedListener onItemSelectedListener;
+    Object selectedItem;
+    int selectedItemPosition;
 
-    private OnClickListener internalOnClickListener = new OnClickListener() {
+    OnClickListener internalOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
             LayoutInflater inflater = (LayoutInflater)
@@ -62,6 +62,7 @@ public class SuperSpinner extends FrameLayout {
 
             if (IS_FILTERABLE) {
                 filterEditText.setVisibility(VISIBLE);
+                filter(null);//initial request
                 filterEditText.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -75,13 +76,7 @@ public class SuperSpinner extends FrameLayout {
 
                     @Override
                     public void afterTextChanged(Editable editable) {
-                        if (filterListener != null) {
-                            mAdapter = filterListener.onFilter(filterEditText.getText().toString());
-                            list.setAdapter(mAdapter);
-                        }
-                        if (callbackFilterListener != null) {
-                            ListAdapter result = callbackFilterListener.onFilter(filterEditText.getText().toString(), registerCallback());
-                        }
+                        filter(filterEditText.getText().toString());
                     }
                 });
             } else {
@@ -90,7 +85,17 @@ public class SuperSpinner extends FrameLayout {
         }
     };
 
-    private Callback registerCallback() {
+    void filter(String text){
+        if (filterListener != null) {
+            mAdapter = filterListener.onFilter(text);
+            list.setAdapter(mAdapter);
+        }
+        if (callbackFilterListener != null) {
+            ListAdapter result = callbackFilterListener.onFilter(text, registerCallback());
+        }
+    }
+
+    Callback registerCallback() {
         return new Callback() {
 
             @Override

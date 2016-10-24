@@ -1,4 +1,4 @@
-package info.tomaszminiach.superspinner;
+package info.tomaszminiach.libshow;
 
 import android.content.Context;
 
