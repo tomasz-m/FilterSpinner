@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         dataProvider = MockDataProvider.getInstance(getApplicationContext());
 
-        ArrayAdapter<String> simpleAdapter = new ArrayAdapter<String>(this, android.R.layout.test_list_item, dataProvider.getItems(null));
+        ArrayAdapter<String> simpleAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dataProvider.getItems(null));
 
         superSpinner.setAdapter(simpleAdapter);
         superSpinner.setFilterable(true);
