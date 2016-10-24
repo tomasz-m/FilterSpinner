@@ -19,9 +19,9 @@ import android.widget.TextView;
 @SuppressWarnings("unused")
 public class SuperSpinner extends FrameLayout {
 
-    //private int maxCount;
+    //only package private fields
     Context mContext;
-    boolean IS_FILTERABLE = false;
+    boolean isFilterable = false;
     ListAdapter mAdapter;
     String emptyText = "no data";
     FilterListener filterListener;
@@ -30,7 +30,7 @@ public class SuperSpinner extends FrameLayout {
     View hintView;
     AdapterView.OnItemSelectedListener onItemSelectedListener;
     Object selectedItem;
-    int selectedItemPosition;
+    View searchIcon, searchProgressBar;
 
     OnClickListener internalOnClickListener = new OnClickListener() {
         @Override
@@ -38,6 +38,10 @@ public class SuperSpinner extends FrameLayout {
             LayoutInflater inflater = (LayoutInflater)
                     mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View layout = inflater.inflate(R.layout.view_superspinner_popup, SuperSpinner.this, false);
+
+            searchIcon = layout.findViewById(R.id.searchImage);
+            searchProgressBar = layout.findViewById(R.id.progressBar);
+            showState(false);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setView(layout);
@@ -47,8 +51,8 @@ public class SuperSpinner extends FrameLayout {
             emptyView.setText(emptyText);
             list = (ListView) layout.findViewById(R.id.listView);
             list.setEmptyView(emptyView);
-            final EditText filterEditText = (EditText) layout.findViewById(R.id.editText);
             list.setAdapter(mAdapter);
+            final EditText filterEditText = (EditText) layout.findViewById(R.id.editText);
 
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -60,7 +64,7 @@ public class SuperSpinner extends FrameLayout {
                 }
             });
 
-            if (IS_FILTERABLE) {
+            if (isFilterable) {
                 filterEditText.setVisibility(VISIBLE);
                 filter(null);//initial request
                 filterEditText.addTextChangedListener(new TextWatcher() {
@@ -85,12 +89,25 @@ public class SuperSpinner extends FrameLayout {
         }
     };
 
+    void showState(boolean isSearching){
+        if(searchIcon==null || searchProgressBar==null)
+            return;
+        if(isSearching){
+            searchProgressBar.setVisibility(VISIBLE);
+            searchIcon.setVisibility(GONE);
+        }else{
+            searchProgressBar.setVisibility(GONE);
+            searchIcon.setVisibility(VISIBLE);
+        }
+    }
+
     void filter(String text){
         if (filterListener != null) {
             mAdapter = filterListener.onFilter(text);
             list.setAdapter(mAdapter);
         }
         if (callbackFilterListener != null) {
+            showState(true);
             ListAdapter result = callbackFilterListener.onFilter(text, registerCallback());
         }
     }
@@ -100,17 +117,34 @@ public class SuperSpinner extends FrameLayout {
 
             @Override
             public void provideAdapter(ListAdapter adapter) {
+                showState(false);
                 mAdapter = adapter;
                 list.setAdapter(mAdapter);
             }
         };
     }
 
+    /**
+     * be careful when using this method - make sure that the requested position is valid for
+     * adapter which is currently assigned (every filtering can replace adapter)
+     * @param i position of item in adapter
+     */
     public void selectItem(int i) {
-        selectedItemPosition = i;
         removeAllViews();
         addView(mAdapter.getView(i, null, SuperSpinner.this));
         selectedItem = mAdapter.getItem(i);
+    }
+
+    /**
+     * This spinner do not require any adapter assigned - it can request for it only when it is needed.
+     * You can set the selected item by passing just this item and corresponding view.
+     * @param selectedItem object
+     * @param view view
+     */
+    public void selectItem(Object selectedItem, View view) {
+        removeAllViews();
+        addView(view);
+        this.selectedItem = selectedItem;
     }
 
     public int getCount() {
@@ -142,7 +176,7 @@ public class SuperSpinner extends FrameLayout {
     public void init(final Context context) {
         mContext = context;
         hintView = new TextView(context);
-        ((TextView) hintView).setText("select");
+        ((TextView) hintView).setText(R.string.select);
         hintView.setPadding(5, 5, 5, 5);
         removeAllViews();
         addView(hintView);
@@ -150,11 +184,11 @@ public class SuperSpinner extends FrameLayout {
     }
 
     public boolean isFilterable() {
-        return IS_FILTERABLE;
+        return isFilterable;
     }
 
     public void setFilterable(boolean IS_FILTERABLE) {
-        this.IS_FILTERABLE = IS_FILTERABLE;
+        this.isFilterable = IS_FILTERABLE;
     }
 
     public void setAdapter(ListAdapter adapter) {
@@ -181,12 +215,22 @@ public class SuperSpinner extends FrameLayout {
         this.emptyText = emptyText;
     }
 
+    /**
+     * Set the view for not initial spinner state when nothing is selected.
+     * By default its a simple "select" text with small padding
+     * @param v hint view
+     */
     public void setHintView(View v) {
         removeAllViews();
         hintView = v;
         addView(hintView);
     }
 
+    /**
+     * Set the view for not initial spinner state when nothing is selected.
+     * By default its a simple "select" text with small padding
+     * @param resourceId resource id of hint view
+     */
     public void setHintView(int resourceId) {
         removeAllViews();
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
@@ -200,7 +244,6 @@ public class SuperSpinner extends FrameLayout {
     public Object getSelectedItem() {
         return selectedItem;
     }
-
 
     public interface FilterListener {
         ListAdapter onFilter(String text);

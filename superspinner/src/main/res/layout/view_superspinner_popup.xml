@@ -1,16 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
-
     android:layout_height="match_parent">
 
-    <EditText
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:drawableRight="@android:drawable/ic_menu_search"
-        android:layout_gravity="center_horizontal"
-        android:padding="15dp"/>
+        android:layout_height="wrap_content">
+        <EditText
+            android:singleLine="true"
+            android:minHeight="64dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText"
+            android:layout_gravity="center_horizontal"
+            android:padding="15dp"
+            android:inputType="text"
+            tools:ignore="LabelFor" />
+
+
+        <ImageView
+            android:id="@+id/searchImage"
+            android:padding="10dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="end|center_vertical"
+            android:src="@android:drawable/ic_menu_search"
+            tools:ignore="ContentDescription" />
+
+        <ProgressBar
+            android:visibility="gone"
+            android:id="@+id/progressBar"
+            android:padding="10dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="end|center_vertical" />
+
+    </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

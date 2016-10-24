@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     DataProvider dataProvider;
     Handler handler = new Handler();
     MyRunnable runnable;
-    boolean isBlocking=true;
+    boolean isBlocking = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,15 +27,13 @@ public class MainActivity extends AppCompatActivity {
         dataProvider = MockDataProvider.getInstance(getApplicationContext());
 
         //setting adapter is not needed when you use filtering
-//        ArrayAdapter<String> simpleAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dataProvider.getItems(null));
-//        superSpinner.setAdapter(simpleAdapter);
-
+        ArrayAdapter<String> simpleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dataProvider.getItems(null));
+        superSpinner.setAdapter(simpleAdapter);
         superSpinner.setFilterable(true);
-
         superSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d("On Item Selected",superSpinner.getSelectedItem().toString());
+                Log.d("On Item Selected", superSpinner.getSelectedItem().toString());
             }
 
             @Override
@@ -45,13 +43,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        if(isBlocking)
+        if (isBlocking)
             //VERSION 1
-            //use for fast updates on teh main thread
+            //use for fast updates on the main thread
             superSpinner.setFilterListener(new SuperSpinner.FilterListener() {
                 @Override
                 public ListAdapter onFilter(String text) {
-                    return new ArrayAdapter<String>(MainActivity.this,android.R.layout.test_list_item,dataProvider.getItems(text));
+                    return new ArrayAdapter<>(MainActivity.this, android.R.layout.test_list_item, dataProvider.getItems(text));
                 }
             });
         else {
@@ -87,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             if (callback != null)
-                callback.provideAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.test_list_item, dataProvider.getItems(text)));
+                callback.provideAdapter(new ArrayAdapter<>(MainActivity.this, android.R.layout.test_list_item, dataProvider.getItems(text)));
 
         }
     }
