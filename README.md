@@ -2,6 +2,7 @@
 Custom android view to replace standard spinner. 
 
 It gives you filtering options for any adapter and data source you use.
+There is also default state with nothing selected.
 
 ![Alt text](/img/spinner1.png?raw=true)
 
@@ -11,7 +12,9 @@ It gives you filtering options for any adapter and data source you use.
 Now the only possibility is downloading the 'superspinner' module and adding it to your porject.
 There are multiple tutorials how to do that - for example [this](http://www.truiton.com/2015/02/android-studio-add-library-project/)
 
-You can of course build this project with example how to use it.
+You can of course build whole project in this repo (with example how to use it).
+
+*I will make it availeb in some jscenter-like repository this week*
 
 ##Using
 Add yo your layout
@@ -23,7 +26,7 @@ Add yo your layout
         android:layout_alignParentStart="true" />
         
 
-In your Activity/Fragment
+In your Activity/Fragment/View
 
         final SuperSpinner superSpinner = (SuperSpinner) findViewById(R.id.superSpinner);
         
@@ -43,7 +46,7 @@ But you can set add filters
 
         superSpinner.setFilterable(true);
 
-VERSION 1 - use for fast updates on teh main thread
+VERSION 1 - use for fast updates on the main thread
 
             superSpinner.setFilterListener(new SuperSpinner.FilterListener() {
                 @Override
@@ -52,7 +55,7 @@ VERSION 1 - use for fast updates on teh main thread
                 }
             });
             
-VERSION 2 - use for longer running filtering
+VERSION 2 - use for longer running filterings
 
             superSpinner.setCallbackFilterListener(new SuperSpinner.CallbackFilterListener() {
                 @Override
