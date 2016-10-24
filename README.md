@@ -1,4 +1,4 @@
-# FilterSpinner
+# Super Spinner
 Custom android view to replace standard spinner. 
 
 It gives you filtering options for any adapter and data source you use.
