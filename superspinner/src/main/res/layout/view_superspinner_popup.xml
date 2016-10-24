@@ -5,14 +5,15 @@
     android:layout_height="match_parent">
 
     <FrameLayout
+        android:id="@+id/searchLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
+            android:id="@+id/editText"
             android:singleLine="true"
             android:minHeight="64dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
             android:layout_gravity="center_horizontal"
             android:padding="15dp"
             android:inputType="text"

@@ -53,6 +53,7 @@ public class SuperSpinner extends FrameLayout {
             list.setEmptyView(emptyView);
             list.setAdapter(mAdapter);
             final EditText filterEditText = (EditText) layout.findViewById(R.id.editText);
+            View searchLayout = layout.findViewById(R.id.searchLayout);
 
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -65,7 +66,7 @@ public class SuperSpinner extends FrameLayout {
             });
 
             if (isFilterable) {
-                filterEditText.setVisibility(VISIBLE);
+                searchLayout.setVisibility(VISIBLE);
                 filter(null);//initial request
                 filterEditText.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -84,7 +85,7 @@ public class SuperSpinner extends FrameLayout {
                     }
                 });
             } else {
-                filterEditText.setVisibility(GONE);
+                searchLayout.setVisibility(GONE);
             }
         }
     };
