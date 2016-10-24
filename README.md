@@ -35,7 +35,7 @@ You can of course build whole project in this repo (with example how to use it).
 
 
 ##Using
-Add yo your layout
+Add to your layout
 
     <info.tomaszminiach.superspinner.SuperSpinner
         style="@style/Base.Widget.AppCompat.Spinner.Underlined"
@@ -47,7 +47,7 @@ Add yo your layout
 
 In your Activity/Fragment/View
 
-        final SuperSpinner superSpinner = (SuperSpinner) findViewById(R.id.superSpinner);
+    final SuperSpinner superSpinner = (SuperSpinner) findViewById(R.id.superSpinner);
         
 You can set adpaters and listeners as for normal spinner
 
@@ -63,7 +63,7 @@ You can set adpaters and listeners as for normal spinner
         
 But you can set add filters
 
-        superSpinner.setFilterable(true);
+    superSpinner.setFilterable(true);
 
 VERSION 1 - use for fast updates on the main thread
 
