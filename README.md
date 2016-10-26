@@ -60,7 +60,7 @@ superSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() 
     public void onNothingSelected(AdapterView<?> adapterView) {}
 });
 ```
-But you can set add filters
+But you can also add a search feature
 ```java
 superSpinner.setFilterable(true);
 ```
