@@ -3,10 +3,12 @@ package info.tomaszminiach.superspinner;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,92 +22,125 @@ import android.widget.TextView;
 public class SuperSpinner extends FrameLayout {
 
     //only package private fields
-    Context mContext;
     boolean isFilterable = false;
     ListAdapter mAdapter;
     String emptyText = "no data";
     FilterListener filterListener;
     CallbackFilterListener callbackFilterListener;
-    ListView list;
     View hintView;
     AdapterView.OnItemSelectedListener onItemSelectedListener;
     Object selectedItem;
-    View searchIcon, searchProgressBar;
+    OnClickListener externalOnClickListener;
+    PopupViewHolder popupViewHolder;
+
+
 
     OnClickListener internalOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            LayoutInflater inflater = (LayoutInflater)
-                    mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View layout = inflater.inflate(R.layout.view_superspinner_popup, SuperSpinner.this, false);
+            showPopup();
 
-            searchIcon = layout.findViewById(R.id.searchImage);
-            searchProgressBar = layout.findViewById(R.id.progressBar);
-            showState(false);
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-            builder.setView(layout);
-            final AlertDialog dialog = builder.create();
-            dialog.show();
-            TextView emptyView = (TextView) layout.findViewById(R.id.emptyView);
-            emptyView.setText(emptyText);
-            list = (ListView) layout.findViewById(R.id.listView);
-            list.setEmptyView(emptyView);
-            list.setAdapter(mAdapter);
-            final EditText filterEditText = (EditText) layout.findViewById(R.id.editText);
-            View searchLayout = layout.findViewById(R.id.searchLayout);
-
-            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    selectItem(i);
-                    dialog.dismiss();
-                    if (onItemSelectedListener != null)
-                        onItemSelectedListener.onItemSelected(adapterView, view, i, l);
-                }
-            });
-
-            if (isFilterable) {
-                searchLayout.setVisibility(VISIBLE);
-                filter(null);//initial request
-                filterEditText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-                        filter(filterEditText.getText().toString());
-                    }
-                });
-            } else {
-                searchLayout.setVisibility(GONE);
+            if (externalOnClickListener != null) {
+                externalOnClickListener.onClick(view);
             }
         }
     };
 
-    void showState(boolean isSearching){
-        if(searchIcon==null || searchProgressBar==null)
-            return;
-        if(isSearching){
-            searchProgressBar.setVisibility(VISIBLE);
-            searchIcon.setVisibility(GONE);
-        }else{
-            searchProgressBar.setVisibility(GONE);
-            searchIcon.setVisibility(VISIBLE);
+    void showPopup(){
+        LayoutInflater inflater = (LayoutInflater)
+                getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.view_superspinner_popup, SuperSpinner.this, false);
+
+        popupViewHolder = new PopupViewHolder();
+
+        popupViewHolder.searchIcon = layout.findViewById(R.id.searchImage);
+        popupViewHolder.searchProgressBar = layout.findViewById(R.id.progressBar);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(layout);
+        final AlertDialog dialog = builder.create();
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                popupViewHolder=null;
+            }
+        });
+        dialog.show();
+
+        popupViewHolder.emptyView = (TextView) layout.findViewById(R.id.emptyView);
+        popupViewHolder.emptyView.setGravity(Gravity.CENTER);
+        popupViewHolder.emptyView.setText(emptyText);
+        popupViewHolder.list = (ListView) layout.findViewById(R.id.listView);
+        popupViewHolder.list.setEmptyView(popupViewHolder.emptyView);
+        popupViewHolder.list.setAdapter(mAdapter);
+        showState(false);
+
+        final EditText filterEditText = (EditText) layout.findViewById(R.id.editText);
+        View searchLayout = layout.findViewById(R.id.searchLayout);
+
+        popupViewHolder.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selectItem(i);
+                dialog.dismiss();
+                if (onItemSelectedListener != null)
+                    onItemSelectedListener.onItemSelected(adapterView, view, i, l);
+            }
+        });
+
+        if (filterListener != null || callbackFilterListener != null) {
+            searchLayout.setVisibility(VISIBLE);
+            filter(null);//initial request
+            filterEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    filter(filterEditText.getText().toString());
+                }
+            });
+        } else {
+            searchLayout.setVisibility(GONE);
         }
     }
 
-    void filter(String text){
+    public OnClickListener getExternalOnClickListener() {
+        return externalOnClickListener;
+    }
+
+    @Override
+    public void setOnClickListener(OnClickListener externalOnClickListener) {
+        this.externalOnClickListener = externalOnClickListener;
+    }
+
+    void showState(boolean isSearching) {
+        if (popupViewHolder==null)
+            return;
+        if (isSearching) {
+            popupViewHolder.emptyView.setVisibility(INVISIBLE);
+            popupViewHolder.searchProgressBar.setVisibility(VISIBLE);
+            popupViewHolder.searchIcon.setVisibility(GONE);
+        } else {
+            popupViewHolder.emptyView.setVisibility(VISIBLE);
+            popupViewHolder.searchProgressBar.setVisibility(GONE);
+            popupViewHolder.searchIcon.setVisibility(VISIBLE);
+        }
+    }
+
+    void filter(String text) {
+        if(popupViewHolder==null)
+            return;
         if (filterListener != null) {
             mAdapter = filterListener.onFilter(text);
-            list.setAdapter(mAdapter);
+            popupViewHolder.list.setAdapter(mAdapter);
         }
         if (callbackFilterListener != null) {
             showState(true);
@@ -118,9 +153,11 @@ public class SuperSpinner extends FrameLayout {
 
             @Override
             public void provideAdapter(ListAdapter adapter) {
+                if(popupViewHolder==null)
+                    return;
                 showState(false);
                 mAdapter = adapter;
-                list.setAdapter(mAdapter);
+                popupViewHolder.list.setAdapter(mAdapter);
             }
         };
     }
@@ -128,6 +165,7 @@ public class SuperSpinner extends FrameLayout {
     /**
      * be careful when using this method - make sure that the requested position is valid for
      * adapter which is currently assigned (every filtering can replace adapter)
+     *
      * @param i position of item in adapter
      */
     public void selectItem(int i) {
@@ -139,8 +177,9 @@ public class SuperSpinner extends FrameLayout {
     /**
      * This spinner do not require any adapter assigned - it can request for it only when it is needed.
      * You can set the selected item by passing just this item and corresponding view.
+     *
      * @param selectedItem object
-     * @param view view
+     * @param view         view
      */
     public void selectItem(Object selectedItem, View view) {
         removeAllViews();
@@ -174,30 +213,46 @@ public class SuperSpinner extends FrameLayout {
         init(context);
     }
 
-    public void init(final Context context) {
-        mContext = context;
+    void init(final Context context) {
         hintView = new TextView(context);
         ((TextView) hintView).setText(R.string.select);
         hintView.setPadding(5, 5, 5, 5);
         removeAllViews();
         addView(hintView);
-        setOnClickListener(internalOnClickListener);
+        super.setOnClickListener(internalOnClickListener);
     }
 
     public boolean isFilterable() {
         return isFilterable;
     }
 
+    /**
+     * set if filter is visible
+     *
+     * @deprecated The spinner is filterable when one of listeners is not null, and not filterable
+     * when both are null. To set them use {@link #setFilterListener(FilterListener)} or
+     * {@link #setCallbackFilterListener(CallbackFilterListener)}
+     */
+    @Deprecated
     public void setFilterable(boolean IS_FILTERABLE) {
         this.isFilterable = IS_FILTERABLE;
     }
 
+    /**
+     * Set the adapter for the spinner. The adapter is then passed to internal instance of
+     * {@link ListView}.
+     * If {@link #setFilterListener(FilterListener)} or
+     * {@link #setCallbackFilterListener(CallbackFilterListener)} are used then there might be no
+     * need to use this methid.
+     *
+     * @param adapter adapter to set
+     */
     public void setAdapter(ListAdapter adapter) {
         this.mAdapter = adapter;
     }
 
     public void swapAdapter(ListAdapter adapter) {
-        this.mAdapter = adapter;
+        setAdapter(adapter);
     }
 
     public FilterListener getFilterListener() {
@@ -208,17 +263,29 @@ public class SuperSpinner extends FrameLayout {
         this.filterListener = filterListener;
     }
 
+    public CallbackFilterListener getCallbackFilterListener() {
+        return callbackFilterListener;
+    }
+
     public void setCallbackFilterListener(CallbackFilterListener callbackFilterListener) {
         this.callbackFilterListener = callbackFilterListener;
     }
 
+    /**
+     * Text that is shown when there are no items in the list
+     *
+     * @param emptyText the shown text
+     */
     public void setEmptyText(String emptyText) {
         this.emptyText = emptyText;
+        if (popupViewHolder != null)
+            popupViewHolder.emptyView.setText(emptyText);
     }
 
     /**
      * Set the view for not initial spinner state when nothing is selected.
      * By default its a simple "select" text with small padding
+     *
      * @param v hint view
      */
     public void setHintView(View v) {
@@ -230,12 +297,34 @@ public class SuperSpinner extends FrameLayout {
     /**
      * Set the view for not initial spinner state when nothing is selected.
      * By default its a simple "select" text with small padding
+     *
      * @param resourceId resource id of hint view
      */
     public void setHintView(int resourceId) {
         removeAllViews();
-        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
+        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
         hintView = layoutInflater.inflate(resourceId, this);
+    }
+
+    /**
+     * Set the view for not initial spinner state when nothing is selected.
+     * By default its a simple "select" text with small padding
+     *
+     * @param resourceId resource id of hint view
+     */
+    public void setHintView(int resourceId, int textViewResourceId, String text) {
+        setHintView(resourceId);
+        ((TextView)hintView.findViewById(textViewResourceId)).setText(text);
+    }
+
+    /**
+     * Set the view for not initial spinner state when nothing is selected.
+     * By default its a simple "select" text with small padding
+     *
+     * @param resourceId resource id of hint view
+     */
+    public void setHintView(int resourceId, int textViewResourceId, int textResourceId) {
+        setHintView(resourceId,textViewResourceId,getResources().getString(textResourceId));
     }
 
     public void setOnItemSelectedListener(AdapterView.OnItemSelectedListener onItemSelectedListener) {
@@ -244,6 +333,13 @@ public class SuperSpinner extends FrameLayout {
 
     public Object getSelectedItem() {
         return selectedItem;
+    }
+
+    //views on the popup
+    class PopupViewHolder {
+        ListView list;
+        View searchIcon, searchProgressBar;
+        TextView emptyView;
     }
 
     public interface FilterListener {

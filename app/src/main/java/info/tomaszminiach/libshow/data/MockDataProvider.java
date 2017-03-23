@@ -1,10 +1,13 @@
-package info.tomaszminiach.libshow;
+package info.tomaszminiach.libshow.data;
 
 import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import info.tomaszminiach.libshow.DataProvider;
+import info.tomaszminiach.libshow.R;
 
 /**
  * Created by Tomek on 2016-10-21.
@@ -14,11 +17,8 @@ public class MockDataProvider implements DataProvider {
     private String[] baseList = null;
 
 
-    private MockDataProvider(Context context){
-        baseList = context.getResources().getStringArray(R.array.countries_array);
-    }
-    public static MockDataProvider getInstance(Context context) {
-        return new MockDataProvider(context);
+    public MockDataProvider(Context appContext){
+        baseList = appContext.getResources().getStringArray(R.array.countries_array);
     }
 
     @Override
