@@ -73,7 +73,6 @@ public class SuperSpinner extends FrameLayout {
         popupViewHolder.list = (ListView) layout.findViewById(R.id.listView);
         popupViewHolder.list.setEmptyView(popupViewHolder.emptyView);
         popupViewHolder.list.setAdapter(mAdapter);
-        showState(false);
 
         final EditText filterEditText = (EditText) layout.findViewById(R.id.editText);
         View searchLayout = layout.findViewById(R.id.searchLayout);

@@ -7,8 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ListAdapter;
 import android.widget.Toast;
 
@@ -29,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
         superSpinner = (SuperSpinner) findViewById(R.id.superSpinner);
         //setting adapter is not needed when you use filtering
-        //ArrayAdapter<String> simpleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dataProvider.getItems(null));
-        //superSpinner.setAdapter(simpleAdapter);
+        ArrayAdapter<String> simpleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dataProvider.getItems(null));
+        superSpinner.setAdapter(simpleAdapter);
         assert superSpinner != null;
         //superSpinner.setFilterable(true);
         superSpinner.setEmptyText("AAA!!\nNO ITEMS :(");
@@ -48,17 +46,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final CheckBox simulateLongQueryChB = (CheckBox) findViewById(R.id.simulateLongCheckbox);
-        assert simulateLongQueryChB != null;
-        simulateLongQueryChB.
-                setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        setSpinnerMode(b);
-                    }
-                });
-        simulateLongQueryChB.setChecked(false);
-        setSpinnerMode(false);
+//        final CheckBox simulateLongQueryChB = (CheckBox) findViewById(R.id.simulateLongCheckbox);
+//        assert simulateLongQueryChB != null;
+//        simulateLongQueryChB.
+//                setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                        setSpinnerMode(b);
+//                    }
+//                });
+//        simulateLongQueryChB.setChecked(false);
+//        setSpinnerMode(false);
 
     }
 
