@@ -25,15 +25,15 @@ android {
     ....
 }
 dependencies {
-    compile 'com.github.tomasz-m:filterspinner:1.3.1' //<==line to add
+    compile 'com.github.tomasz-m:filterspinner:1.4.1' //<==line to add
 }
 ```
 
 You can of course build whole project from this repo (with example how to use it).
 
 
-##Using
-Add to your layout
+## Using
+Add to your layout..
 ```xml
 <info.tomaszminiach.superspinner.SuperSpinner
     style="@style/Base.Widget.AppCompat.Spinner.Underlined"
@@ -43,11 +43,16 @@ Add to your layout
 ```
         
 
-In your Activity/Fragment/View
+... find in your Activity/Fragment/View ...
 ```java
 final SuperSpinner superSpinner = (SuperSpinner) findViewById(R.id.superSpinner);
 ```
-        
+... and eventually do some configuraion
+```java
+//its a good idea to set the hint view with same layout as in adapter
+superSpinner.setHintView(android.R.layout.simple_list_item_1, android.R.id.text1," -please select- ");
+```
+
 You can set adpaters and listeners as for normal spinner
 ```java
 superSpinner.setAdapter(simpleAdapter);
@@ -60,11 +65,9 @@ superSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() 
     public void onNothingSelected(AdapterView<?> adapterView) {}
 });
 ```
-But you can also add a search feature
-```java
-superSpinner.setFilterable(true);
-```
-VERSION 1 - use for fast updates on the main thread
+But you can also add **the search feature** if you add one of the following listeners (in this case you dont have to use the `setAdapter(...)`:
+
+- VERSION 1 - use for fast updates on the main thread
 ```java
 superSpinner.setFilterListener(new SuperSpinner.FilterListener() {
     @Override
@@ -73,7 +76,7 @@ superSpinner.setFilterListener(new SuperSpinner.FilterListener() {
     }
 });
 ```            
-VERSION 2 - use for longer running filterings
+- VERSION 2 - use for longer running filterings
 ```java
 superSpinner.setCallbackFilterListener(new SuperSpinner.CallbackFilterListener() {
     @Override
