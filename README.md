@@ -4,9 +4,7 @@ Custom android view to replace standard spinner.
 It gives you filtering options for any adapter and data source you use.
 There is also default state with nothing selected.
 
-![Alt text](/img/spinner1.png?raw=true)
-
-![Alt text](/img/spinner2.png?raw=true)
+![Alt text](/img/filterSpinnerAnim.gif?raw=true)
 
 ## Adding to your project
 
